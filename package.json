@@ -1,0 +1,42 @@
+{
+  "name": "block-explorer",
+  "version": "1.0.0",
+  "description": "A Bitcoin/Flo block explorer in Node JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avishkarabhishek786/bitflo-block-explorer.git"
+  },
+  "keywords": [
+    "Bitcoin",
+    "Flo",
+    "Blockchain",
+    "Block",
+    "Explorer",
+    "Wallet"
+  ],
+  "author": "Abhishek Sinha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avishkarabhishek786/bitflo-block-explorer/issues"
+  },
+  "homepage": "https://github.com/avishkarabhishek786/bitflo-block-explorer#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bitcoin-core": "^2.0.0",
+    "body-parser": "^1.18.3",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-flash": "0.0.2",
+    "express-layout": "^0.1.0",
+    "express-validator": "^5.2.0",
+    "helmet": "^3.12.1",
+    "lodash": "^4.17.10",
+    "path": "^0.12.7"
+  }
+}

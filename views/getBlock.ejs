@@ -1,0 +1,26 @@
+<% include partials/header.ejs %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="__blockhash">
+        <div class="form-group">
+          <label for="_blockhash">Enter a Block Hash</label>
+          <input type="text" class="form-control" id="_blockhash" placeholder="Enter a valid blockhash">
+          <small id="emailHelp" class="form-text text-muted">Depending upon the daemon your are running, you can put a Bitcoin or a Flo blockhash.</small>
+        </div>
+        <button type="submit" class="btn btn-primary" id="blockhash-sub">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card" id="blockhash-result">
+          <%=data.height%>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% include partials/footer.ejs %>
