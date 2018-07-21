@@ -4,7 +4,9 @@
   "description": "A Bitcoin/Flo block explorer in Node JS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify public/js/main.js -o public/js/bundle.js",
+    "watch": "watchify public/js/main.js -o public/js/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -36,7 +38,12 @@
     "express-layout": "^0.1.0",
     "express-validator": "^5.2.0",
     "helmet": "^3.12.1",
+    "jquery": "^3.3.1",
     "lodash": "^4.17.10",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "watchify": "^3.11.0"
   }
 }

@@ -39,8 +39,10 @@ router.post('/getBlock', (req, res)=>{
     } catch (e) {
       console.log(e);
     }
+})
 
-
+router.get('/test', (req, res)=>{
+  res.render('test', {title:'Testing page'})
 })
 
 

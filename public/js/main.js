@@ -1,3 +1,6 @@
+const $ = require('jquery')
+require('buffer') // comes in with browserify
+
 $(document).on('click', '#blockhash-sub', function(e) {
   e.preventDefault();
 
@@ -24,7 +27,6 @@ $(document).on('click', '#blockhash-sub', function(e) {
           t += '<p> Previousblockhash'+response.previousblockhash+'</p>';
           t += '<p> Nextblockhash: '+response.nextblockhash+'</p>';
           t += '<h5>Transactions included: </h5>';
-          console.log(response.tx.length);
           if(response.tx.length>0) {
             for (var i = 0; i < response.tx.length; i++) {
               t += '<p> txid: '+response.tx[i].txid+'</p>';
@@ -74,3 +76,14 @@ $(document).on('click', '#blockhash-sub', function(e) {
   });
 
 });
+
+$(document).on('click', '#test-btn', function() {
+  var priKey = "bffc7b9388275f89cac5a0f90b166440fbd9209656b866c4210478efbb8faeaf";
+  var bbb = Buffer.from(priKey);
+  console.log(bbb);
+  const privateKey = Buffer.from(priKey).toString('hex');
+  //console.log(`Private key: ${privateKey}`);
+
+  var buff = new Buffer( privateKey, 'hex' );
+  console.log(buff);
+})
