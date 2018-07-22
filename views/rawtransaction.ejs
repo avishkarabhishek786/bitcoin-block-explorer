@@ -1,0 +1,32 @@
+<% include partials/header.ejs %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mg-20">
+                <h5>Click to get list of unspent transactions:</h5>
+                <button type="button" id="lsus-btn" class="btn btn-primary" name="button">Click me</button>
+            </div>     
+        </div>
+        <div class="cards" id="res-lsus"></div>    
+    </div>
+
+    <div class="row"
+        <div class="col-md-12">
+            <div class="mg-20">
+                <label for="addr-id">Address: </label>
+                <input type="text" id="addr-id" class="form-control">
+                <label for="crtx-id">Txid: </label>
+                <input type="text" id="crtx-id" class="form-control">
+                <p>-----------------------------------------------------</p>
+                <label for="sendaddr">Address where amount to send: </label>
+                <input type="text" id="sendaddr" class="form-control">
+                <label for="amnt">Amount to send: </label>
+                <input type="text" id="amnt" class="form-control">
+                <button type="button" id="crtx-btn" class="btn btn-primary" name="button">Click me</button>
+            </div>     
+        </div>    
+    </div>
+    <div class="cards" id="res-card"></div>
+</div>
+
+<% include partials/footer.ejs %>

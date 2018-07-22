@@ -77,13 +77,47 @@ $(document).on('click', '#blockhash-sub', function(e) {
 
 });
 
-$(document).on('click', '#test-btn', function() {
-  var priKey = "bffc7b9388275f89cac5a0f90b166440fbd9209656b866c4210478efbb8faeaf";
-  var bbb = Buffer.from(priKey);
-  console.log(bbb);
-  const privateKey = Buffer.from(priKey).toString('hex');
-  //console.log(`Private key: ${privateKey}`);
+$(document).on('click', '#lsus-btn', function() {
+   $.ajax({
+     type: 'post',
+     url: '/listunspent',
+     success: function(data) {
+       let t = '<ul>';
+       for (let i = 0; i < data.listUnspent.length; i++) {
+         const element = data.listUnspent[i];
+         t += '<li>Address: '+element.address+'</li>';
+         t += '<li>Amount: '+element.amount+'</li>';
+         t += '<li> Txid: '+element.txid+'</li>';
+         t += '<li> Vout: '+element.vout+'</li>';
+         t += '<hr>';
+       }
+       t += '</ul>';
+       $('#res-lsus').html(t);
+     },
+     error: function(jqXHR, textStatus, errorThrown) {
+       console.log(textStatus, errorThrown);
+    } 
+   });
+ });
 
-  var buff = new Buffer( privateKey, 'hex' );
-  console.log(buff);
-})
+$(document).on('click', '#crtx-btn', function() {
+ let txid = $('#crtx-id').val();
+ let addr = $('#addr-id').val();
+ let amnt = $('#amnt').val();
+ let sendaddr = $('#sendaddr').val();
+ if(addr.length > 0) {
+  $.ajax({
+      type: 'post',
+      url: '/rawtransaction',
+      data: {addr:addr, txid:txid, sendaddr:sendaddr, amnt:amnt},
+      success: function(data) {
+        console.log(data);
+        $('#res-card').text(data.prikey);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+     } 
+    });
+ } 
+  
+});
