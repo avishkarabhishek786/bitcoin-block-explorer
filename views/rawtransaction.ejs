@@ -13,20 +13,22 @@
     <div class="row"
         <div class="col-md-12">
             <div class="mg-20">
-                <label for="addr-id">Address: </label>
+                <label for="addr-id">Choose an address from the wallet (click above link): </label>
                 <input type="text" id="addr-id" class="form-control">
-                <label for="crtx-id">Txid: </label>
+                <label for="crtx-id">Respective Vout Txid of the above address: </label>
                 <input type="text" id="crtx-id" class="form-control">
-                <p>-----------------------------------------------------</p>
-                <label for="sendaddr">Address where amount to send: </label>
+                <p>-----------------------------------------------------------------------------------------</p>
+                <label for="sendaddr">Address of Receiver where amount to send: </label>
                 <input type="text" id="sendaddr" class="form-control">
-                <label for="amnt">Amount to send: </label>
-                <input type="text" id="amnt" class="form-control">
-                <button type="button" id="crtx-btn" class="btn btn-primary" name="button">Click me</button>
+                <label for="amnt">Amount to send (KEEP MINER's FEE IN MIND): </label>
+                <input type="text" id="amnt" class="form-control" placeholder="Amount in FLO">
+                <br>
+                <button type="button" id="crtx-btn" class="btn btn-primary" name="button">Send FLO</button>
             </div>     
-        </div>    
+        </div>
+        <div class="cards mg-20" id="res-card"></div>    
     </div>
-    <div class="cards" id="res-card"></div>
+    
 </div>
-
+<div class="mg-20"></div>
 <% include partials/footer.ejs %>

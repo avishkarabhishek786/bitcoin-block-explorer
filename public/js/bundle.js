@@ -12456,7 +12456,12 @@ $(document).on('click', '#crtx-btn', function() {
       data: {addr:addr, txid:txid, sendaddr:sendaddr, amnt:amnt},
       success: function(data) {
         console.log(data);
-        $('#res-card').text(data.prikey);
+        var t = '<p>Error: Something went wrong! Check console logs.</p>';
+        if($.trim(data.signedtxid) !== null) {
+          t = '<h5>Transaction Successful: ';
+          t += "<a href='https://testnet.florincoin.info/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a></h5>";        
+        }
+        $('#res-card').html(t);
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);

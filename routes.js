@@ -83,15 +83,30 @@ router.post('/rawtransaction', (req, res)=>{
            if (parseFloat(amountToSend) <= parseFloat(element.value)) {
               let input = [{"txid": txid,"vout":element.n}]
               //let output = `{"${senderAddr}":"${amountToSend}"}`
-              let output = new Object({senderAddr:amountToSend});
-              //output.map(({ id }) => ({ label: id}));
-              Object.keys(output).map(({senderAddr})=>({senderAddr:senderAddr}))
-              console.log(output);
+              let output = new Object({[senderAddr]:amountToSend});
               
-              // client.createRawTransaction(input, output).then(raw=>{
-              //   console.log(raw);
-              //   //return raw;
-              // })
+              client.createRawTransaction(input, output).then(raw=>{
+                console.log(`unsignedrawtx: ${raw}`);
+                client.signRawTransaction(raw).then(signtx=>{
+                  console.log(`signedrawtx status: ${signtx.complete}`);
+                  console.log(`signedrawtx hex: ${signtx.hex}`);
+                  if(signtx.complete==true) {
+                    client.sendRawTransaction(signtx.hex).then(txid=>{
+                      console.log(`txid: ${txid}`);
+                      res.json({'signedtxid':txid});
+                    }).catch(function (error) {
+                      console.log(error);
+                    });
+                  } else {
+                    res.json({'signedtxid':null});
+                  }
+                }).catch(function (error) {
+                  console.log(error);
+                });
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
               break;
            } else {
              console.log(`This amount is less than the required amount.`)
@@ -99,9 +114,6 @@ router.post('/rawtransaction', (req, res)=>{
          } 
         }
       })
-      // .then(rawtx=>{
-
-      // })
       .catch(function (error) {
         console.log(error);
       });      
