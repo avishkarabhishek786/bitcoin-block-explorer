@@ -1,6 +1,42 @@
 const $ = require('jquery')
 require('buffer') // comes in with browserify
 
+$(document).on('click', '.screen-req', function(e) {
+  e.preventDefault();
+  e.stopPropagation() 
+  var url = '';
+  var href = $(this).attr('href');
+
+  switch (href) {
+    case 'getbestblockhash':
+      url = '/getbestblockhash';
+      break;
+  
+    default:
+      break;
+  }
+  
+  $.ajax({
+    url: url,
+    type: 'post',
+    success: function(res) {
+      $('#res-card').removeClass(' d-none');
+      var response = '<h5>Response: </h5>';
+      
+      if(typeof res.getbestblockhash !== 'undefined') {
+        response += res.getbestblockhash;
+      }
+
+      $('#screen').html(response);
+
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+    } 
+  })    
+})
+
+
 $(document).on('click', '#blockhash-sub', function(e) {
   e.preventDefault();
 

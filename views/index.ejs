@@ -1,1 +1,20 @@
-hello
+<% include partials/header.ejs %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <ul>
+                <li><a href="/">HOME</a></li>
+                <li><a href="getbestblockhash" class="screen-req">Best Block</a></li>
+            </ul> 
+        </div>
+
+        <div class="col-md-8">
+            <div class="card d-none" id="res-card">
+                <div id="screen" class="p-1"></div>
+            </div>
+        </div>
+    </div>
+</div>         
+
+<% include partials/footer.ejs %>

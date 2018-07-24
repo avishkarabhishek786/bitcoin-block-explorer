@@ -7,7 +7,11 @@ const _ = require('lodash')
 const client = require('./server')
 
 router.get('/', (req, res)=>{
-  res.render('index')
+  res.render('index', {
+    title: 'getBlock',
+    errors: {},
+    data: {}
+  })
 })
 
 router.get('/getBlock', (req, res)=>{
@@ -40,6 +44,20 @@ router.post('/getBlock', (req, res)=>{
     } catch (e) {
       console.log(e);
     }
+})
+
+router.post('/getbestblockhash', (req, res)=> {
+  let param = _.pick(req.body, ['bestblockhash'])
+  let bestblockhash = param.bestblockhash;
+  
+  try {
+    client.getBestBlockHash().then(hash=>{
+      console.log(hash);
+      res.json({"getbestblockhash":hash})
+    })    
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 router.get('/rawtransaction', (req, res)=>{
