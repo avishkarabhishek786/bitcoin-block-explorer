@@ -60,6 +60,56 @@ router.post('/getbestblockhash', (req, res)=> {
   }
 })
 
+/**getblockchaininfo */
+router.post('/getblockchaininfo', (req, res)=>{
+  try {
+    client.getBlockchainInfo().then(info=>{
+      console.log(info);
+      res.json({"getblockchaininfo": info})
+    })
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+/**getchaintips */
+router.post('/getchaintips', (req, res)=>{
+  try {
+    client.getChainTips().then(height=>{
+      res.json({getchaintips:height})
+    })
+  } catch (error) {
+    console.log(error);
+  }   
+})
+
+/**getblockcount */
+router.post('/getblockcount', (req, res)=>{
+  try {
+    client.getBlockCount().then(count=>{
+      res.json({getblockcount:count})
+    })
+  } catch (error) {
+    console.log(error);
+  }   
+})
+
+/**getconnectioncount */
+router.post('/getconnectioncount', (req, res)=>{
+  try {
+    client.getConnectionCount().then(count=>{
+      res.json({getconnectioncount:count})
+    })
+  } catch (error) {
+    console.log(error);
+  }   
+})
+
+
+
+
+
+
 router.get('/rawtransaction', (req, res)=>{
   res.render('rawtransaction', {
     title: 'rawtransaction',

@@ -11,6 +11,21 @@ $(document).on('click', '.screen-req', function(e) {
     case 'getbestblockhash':
       url = '/getbestblockhash';
       break;
+
+    case 'getblockchaininfo':
+      url = '/getblockchaininfo';
+      break;
+
+    case 'getblockcount':
+      url = '/getblockcount';
+      break;
+
+    case 'getchaintips':
+      url = '/getchaintips';
+      break;
+    case 'getconnectioncount':
+      url = '/getconnectioncount';
+      break;
   
     default:
       break;
@@ -20,11 +35,28 @@ $(document).on('click', '.screen-req', function(e) {
     url: url,
     type: 'post',
     success: function(res) {
+      console.log(res);
+      
       $('#res-card').removeClass(' d-none');
       var response = '<h5>Response: </h5>';
       
       if(typeof res.getbestblockhash !== 'undefined') {
         response += res.getbestblockhash;
+      }
+      if(typeof res.getblockcount !== 'undefined') {
+        response += res.getblockcount;
+      }
+      if(typeof res.getchaintips !== 'undefined') {
+        response += JSON.stringify(res);
+        console.log(response);
+      }
+      if(typeof res.getconnectioncount !== 'undefined') {
+        response += res.getconnectioncount;
+      }
+
+      if(typeof res.getblockchaininfo !== 'undefined') {
+        response += JSON.stringify(res);
+        console.log(response);
       }
 
       $('#screen').html(response);
