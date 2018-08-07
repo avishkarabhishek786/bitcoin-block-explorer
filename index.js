@@ -11,6 +11,8 @@ const app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
+const port = process.env.PORT || 3000;
+
 const middleware = [
   express.static(path.join(__dirname, 'public')),
   bodyParser.urlencoded({extended:true}),
@@ -39,8 +41,8 @@ app.use((err, req, res, next)=>{
   res.status(500).send('500 Internal Error!')
 })
 
-app.listen(3000, (e)=>{
+app.listen(port, (e)=>{
   if (!e) {
-    console.log('App listenning on port 3000');
+    console.log(`App listenning on port ${port}`);
   }
 })

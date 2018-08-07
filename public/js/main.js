@@ -150,16 +150,24 @@ $(document).on('click', '#lsus-btn', function() {
      type: 'post',
      url: '/listunspent',
      success: function(data) {
-       let t = '<ul>';
+       console.log(data);
+       
+       let t = '';
        for (let i = 0; i < data.listUnspent.length; i++) {
          const element = data.listUnspent[i];
+         if (!element.spendable) {
+           continue;
+         }
+         t += '<input type="checkbox" class="gchk"> Select this Tx';
+         t += '<ul class="tclick">';
          t += '<li>Address: '+element.address+'</li>';
          t += '<li>Amount: '+element.amount+'</li>';
-         t += '<li> Txid: '+element.txid+'</li>';
-         t += '<li> Vout: '+element.vout+'</li>';
+         t += 'Txid: <li id="gtx">'+element.txid+'</li>';
+         t += 'Vout: <li id="gvout">'+element.vout+'</li>';
+         t += '<li> Confirmations: '+element.confirmations+'</li>';
+         t += '</ul>';
          t += '<hr>';
        }
-       t += '</ul>';
        $('#res-lsus').html(t);
      },
      error: function(jqXHR, textStatus, errorThrown) {
@@ -168,24 +176,41 @@ $(document).on('click', '#lsus-btn', function() {
    });
  });
 
+
 $(document).on('click', '#crtx-btn', function() {
- let txid = $('#crtx-id').val();
- let addr = $('#addr-id').val();
  let amnt = $('#amnt').val();
+ amnt = parseFloat(amnt);
  let sendaddr = $('#sendaddr').val();
- if(addr.length > 0) {
+
+ var boxes = $('input[class=gchk]:checked');
+
+  var txArr = [];
+  var txtext = "";
+  var vouttext = "";
+
+  boxes.each(function(box){
+    var btn = this;
+    txtext = $(btn).next('ul').children("#gtx").text();
+    vouttext = $(btn).next('ul').children("#gvout").text();
+    if (txtext.length>0 && vouttext.length>0) {
+      txArr.push([{"txid":txtext,"vout":vouttext}]);
+    }
+  });
+  console.log(txArr); 
+
+ if(sendaddr.length > 0 && txArr.length > 0 && amnt>0) {
   $.ajax({
       type: 'post',
       url: '/rawtransaction',
-      data: {addr:addr, txid:txid, sendaddr:sendaddr, amnt:amnt},
+      data: {txArr:txArr, sendaddr:sendaddr, amnt:amnt},
       success: function(data) {
         console.log(data);
-        var t = '<p>Error: Something went wrong! Check console logs.</p>';
-        if($.trim(data.signedtxid) !== null) {
-          t = '<h5>Transaction Successful: ';
-          t += "<a href='https://testnet.florincoin.info/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a></h5>";        
-        }
-        $('#res-card').html(t);
+        // var t = '<p>Error: Something went wrong! Check console logs.</p>';
+        // if($.trim(data.signedtxid) !== null) {
+        //   t = '<h5>Transaction Successful: ';
+        //   t += "<a href='https://testnet.florincoin.info/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a></h5>";        
+        // }
+        // $('#res-card').html(t);
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
