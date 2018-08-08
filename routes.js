@@ -6,6 +6,7 @@ const {matchedData, sanitize} = require('express-validator/filter')
 const _ = require('lodash')
 var util = require('util')
 const client = require('./server')
+const funcs = require('./public/js/funcs') 
 
 router.get('/', (req, res)=>{
   res.render('index', {
@@ -125,23 +126,54 @@ router.post('/listunspent', (req, res)=>{
 })
 
 router.post('/rawtransaction', (req, res)=>{
-  let params = _.pick(req.body, ['txArr', 'sendaddr', 'amnt'])
+
+  let params = _.pick(req.body, ['txArr', 'voutArr', 'sendaddr', 'amnt', 'tx_amount'])
+
+  const senderAddr = params.sendaddr  // Sender address
+  const amountToSend = parseFloat(params.amnt) // amount to be sent to sender
+  const amountInTx = parseFloat(params.tx_amount) // Sum amount in txes
+  const fee = 0.0001 //miner's fee
+  const change = (amountInTx - amountToSend - fee).toFixed(6);
+
+  console.log(change<0.0001);
   
+  if ((change<0.0001)==true) {
+    res.json({"error":true, "msg":"Insufficient change"});
+    return;
+  }
+
+  const input = [];
   
-  
-  // try {
-  //   client.createRawTransaction(params.txArr)
-  //   .then(hex=>console.log(hex)
-  //   )
-  // } catch (error) {
-  //   console.log(error);
-  // } 
+  if (params.txArr.length !== params.voutArr.length) {
+    res.json({"error":true, "msg":"tx and vout mismatch"});
+    return;
+  } 
+
+  for (let i = 0; i < params.txArr.length; i++) {
+    const txid = params.txArr[i];
+    const vout = parseInt(params.voutArr[i]);
+    input.push({"txid":txid, "vout":vout});
+  }
+
+  funcs.newChangeAddr().then(changeAddr=>{
+    const output = new Object({[senderAddr]:amountToSend, [changeAddr]:change});
+    console.log(input);
+    console.log(output);  
+
+    try {
+      client.createRawTransaction(input, output)
+      .then(hex=>console.log(hex))
+    } catch (error) {
+      console.log(error);
+    } 
+
+  });
   
 })
 
 
-router.get('/test', (req, res)=>{
-  res.render('test', {title:'Testing page'})
+router.post('/test', (req, res)=>{
+  funcs.newChangeAddr().then(changeAddr=>res.json({"res": changeAddr}));
 })
 
 

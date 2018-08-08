@@ -161,7 +161,7 @@ $(document).on('click', '#lsus-btn', function() {
          t += '<input type="checkbox" class="gchk"> Select this Tx';
          t += '<ul class="tclick">';
          t += '<li>Address: '+element.address+'</li>';
-         t += '<li>Amount: '+element.amount+'</li>';
+         t += 'Amount: <li id="gtxamount">'+element.amount+'</li>';
          t += 'Txid: <li id="gtx">'+element.txid+'</li>';
          t += 'Vout: <li id="gvout">'+element.vout+'</li>';
          t += '<li> Confirmations: '+element.confirmations+'</li>';
@@ -185,26 +185,45 @@ $(document).on('click', '#crtx-btn', function() {
  var boxes = $('input[class=gchk]:checked');
 
   var txArr = [];
+  var voutArr = [];
   var txtext = "";
   var vouttext = "";
+  var tx_amount = 0;
 
   boxes.each(function(box){
     var btn = this;
+    txbal = $(btn).next('ul').children("#gtxamount").text();
     txtext = $(btn).next('ul').children("#gtx").text();
     vouttext = $(btn).next('ul').children("#gvout").text();
-    if (txtext.length>0 && vouttext.length>0) {
-      txArr.push([{"txid":txtext,"vout":vouttext}]);
+    vouttext = parseInt(vouttext);
+    
+    if (txtext.length>0 && vouttext>-1) {
+      txArr.push(txtext);
+      voutArr.push(vouttext);
     }
-  });
-  console.log(txArr); 
 
- if(sendaddr.length > 0 && txArr.length > 0 && amnt>0) {
+    // Add the amount in selected txes
+    tx_amount += parseFloat(txbal);
+  });
+  // console.log(txArr); 
+  // console.log(voutArr); 
+  // console.log(tx_amount); 
+
+ if(sendaddr.length > 0 && txArr.length > 0 && voutArr.length>0 && amnt>0 && tx_amount>0) {
   $.ajax({
       type: 'post',
       url: '/rawtransaction',
-      data: {txArr:txArr, sendaddr:sendaddr, amnt:amnt},
+      data: {txArr:txArr, voutArr:voutArr, sendaddr:sendaddr, amnt:amnt, tx_amount:tx_amount},
       success: function(data) {
         console.log(data);
+
+        if (data.error==true) {
+          if (data.msg.length>0) {
+            alert(data.msg)
+          }
+          return;
+        }
+        
         // var t = '<p>Error: Something went wrong! Check console logs.</p>';
         // if($.trim(data.signedtxid) !== null) {
         //   t = '<h5>Transaction Successful: ';
@@ -219,3 +238,7 @@ $(document).on('click', '#crtx-btn', function() {
  } 
   
 });
+
+
+
+
