@@ -12559,7 +12559,6 @@ $(document).on('click', '#crtx-btn', function() {
       url: '/rawtransaction',
       data: {txArr:txArr, voutArr:voutArr, sendaddr:sendaddr, amnt:amnt, tx_amount:tx_amount},
       success: function(data) {
-        console.log(data);
 
         if (data.error==true) {
           if (data.msg.length>0) {
@@ -12568,12 +12567,16 @@ $(document).on('click', '#crtx-btn', function() {
           return;
         }
         
-        // var t = '<p>Error: Something went wrong! Check console logs.</p>';
-        // if($.trim(data.signedtxid) !== null) {
-        //   t = '<h5>Transaction Successful: ';
-        //   t += "<a href='https://testnet.florincoin.info/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a></h5>";        
-        // }
-        // $('#res-card').html(t);
+        var t = '<p>Error: Something went wrong! Check console logs.</p>';
+        if (data.data.length) {
+          let dec = JSON.stringify(data.data[1]);
+          t = '<p>This is your decoded raw transaction. Please double check evrything: </p>';
+          t += `<div class="card">${dec}</div>`;
+          t += `<br><p>If everything is right please click the button "Send transaction" below to send the transaction.</p>`;
+
+          $('#sendTxDiv').text(data.data[0]);
+        }
+        $('#res-card').html(t);
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -12581,6 +12584,35 @@ $(document).on('click', '#crtx-btn', function() {
     });
  } 
   
+});
+
+$(document).on('click', '#sendTxBtn', function() {
+  var btn = this;
+  var hex = $("#sendTxDiv").text();
+  var job = "sendtx";
+
+  if (hex.length<0) {
+    alert("No Hex data found!");
+    return;
+  }
+  $.ajax({
+    type: 'post',
+    url: '/sendrawtx',
+    data: {job:job, hex:hex},
+    success: function(data) {
+      console.log(data);
+      var t = '<p>Error: Something went wrong! Check console logs.</p>';
+      if($.trim(data.signedtxid) !== null) {
+        t = '<h5>Transaction Successful: ';
+        t += "<a href='https://live.blockcypher.com/btc-testnet/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a>  ";        
+        t += "  <a href='https://testnet.blockchain.info/tx/"+data.signedtxid+"?format=json' target='_blank'>View my transaction JSON</a></h5>";        
+      }
+      $('#res-card-result').html(t);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+   } 
+  });
 });
 
 

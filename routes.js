@@ -138,14 +138,14 @@ router.post('/rawtransaction', (req, res)=>{
   console.log(change<0.0001);
   
   if ((change<0.0001)==true) {
-    res.json({"error":true, "msg":"Insufficient change"});
+    res.json({"error":true, "msg":"Insufficient change", "data":null});
     return;
   }
 
   const input = [];
   
   if (params.txArr.length !== params.voutArr.length) {
-    res.json({"error":true, "msg":"tx and vout mismatch"});
+    res.json({"error":true, "msg":"tx and vout mismatch", "data":null});
     return;
   } 
 
@@ -157,18 +157,71 @@ router.post('/rawtransaction', (req, res)=>{
 
   funcs.newChangeAddr().then(changeAddr=>{
     const output = new Object({[senderAddr]:amountToSend, [changeAddr]:change});
-    console.log(input);
-    console.log(output);  
+    //console.log(input);
+    //console.log(output);  
 
     try {
       client.createRawTransaction(input, output)
-      .then(hex=>console.log(hex))
+      .then(hex=>{
+        if (hex==null) {
+          res.json({"error":true, "msg":"Raw transaction could not be created.", "data":null});
+        }
+        //console.log(hex)
+        try {
+          client.decodeRawTransaction(hex)
+          .then(dhex=>
+            res.json(
+            {
+              "error":false, 
+              "msg":"Raw tx decoded successfully.", 
+              "data":[hex, dhex]
+            }
+          ))
+        } catch (error) {
+          console.error(error);
+        }
+      })
     } catch (error) {
       console.log(error);
     } 
 
   });
   
+})
+
+router.post('/sendrawtx', (req, res)=>{
+
+  let data = _.pick(req.body, ['job', 'hex'])
+  
+  if (typeof data.job == undefined || typeof data.hex==undefined ||  data.job!=="sendtx" || data.hex.length<0) {
+    res.json({"error":true, "msg":"Invalid request", "data":null});
+    return;
+  }
+
+  let raw = data.hex;
+  console.log(`unsignedrawtx: ${raw}`);
+
+  try {
+    client.signRawTransaction(raw).then(signtx=>{
+      console.log(`signedrawtx status: ${signtx.complete}`);
+      console.log(`signedrawtx hex: ${signtx.hex}`);
+      if(signtx.complete==true) {
+        client.sendRawTransaction(signtx.hex).then(txid=>{
+          console.log(`txid: ${txid}`);
+          res.json({'signedtxid':txid});
+        }).catch(function (error) {
+          console.log(error);
+        });
+      } else {
+        res.json({'signedtxid':null});
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
+  } catch (error) {
+    console.error(error)
+  } 
+
 })
 
 
