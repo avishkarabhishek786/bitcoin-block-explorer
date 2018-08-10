@@ -271,6 +271,49 @@ $(document).on('click', '#sendTxBtn', function() {
   });
 });
 
+/**Multisig Operations */
+
+$(document).on('click', '#MultiSigBtn', function() {
+
+  let job = 'createmultisig';
+  let m = $("#mreqkey").val();
+  let keys = $("#nkeys").val();
+
+  $.ajax({
+    type: 'post',
+    url: '/createmultisig',
+    data: {job:job, m:m, keys:keys},
+    success: function(res) {
+      console.log(res);
+      
+      if (res == undefined) {
+        alert("Something went wrong. Try again.");
+        return;
+      }
+
+      if (res.error==true) {
+        if (res.msg.length>0) {
+          alert(res.msg);
+          return;
+        }
+      }
+
+      var t = '';
+      if (res.error==false && res.msg.length>0 && res.data!=null) {
+        t += '<p class="text-success">Multisig Address created successfully!</p>';
+        t += `<p><strong>${res.data.address}</strong></p>`;
+        t += '<p>Below is the corresponding reddem script:</p>';
+        t += `<strong>${res.data.redeemScript}</strong>`;
+      }
+      $("#res-div").html(t);
+
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+   } 
+  });
+
+})
 
 
 

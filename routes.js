@@ -224,6 +224,97 @@ router.post('/sendrawtx', (req, res)=>{
 
 })
 
+/**MultiSig Operations */
+
+router.get('/multisig', (req, res)=>{
+  res.render('multisig', {
+    title: 'multisig',
+    errors: {},
+    data: {}
+  })
+})
+
+// router.post('/createmultisiggg', (req, res)=>{
+//   let params = _.pick(req.body, ['m', 'keys'])
+
+//   let m = parseInt(params.m)
+//   let pubkeys = params.keys.split(",")
+  
+//   if (m < pubkeys.length) {
+//     res.json({"error":true, "msg":"m cannot be less than n", data:null})
+//     return
+//   }
+  
+//   let pubkeyarr = []
+
+//   for (var key in pubkeys) {    
+//     let promise = funcs.isAddressValid(_.trim(pubkeys[key]))
+//     pubkeyarr.push(promise);   
+//   } 
+
+//   let validPubKeys = []
+
+//   Promise.all(pubkeyarr).then((res)=>{
+//     res.forEach((op)=>{
+//       validPubKeys.push(op);
+//     })
+//     return validPubKeys
+//   }).then(pubK=>{
+//     //console.log(typeof pubK);
+//     //console.log(m);
+//     if (pubK.length<1 || pubK.length < m) {
+//       res.json({"error":true, "msg":"Invalid numbers of Public keys", data:null})
+//       return
+//     }
+//     try {
+//       client.createMultiSig(m, pubK).then(multisig=>{
+//         res.json({"error":false, "msg":"Multisig address created successfully!", data:multisig})
+//         return
+//       }).catch(e=>console.error(e))
+//     } catch (error) {
+//       console.error(error);
+//     }
+
+//   })
+
+// })
+
+
+
+router.post('/createmultisig', (req, res)=>{
+  let params = _.pick(req.body, ['m', 'keys'])
+
+  let m = parseInt(params.m)
+  let pubkeys = params.keys.split(",")
+  
+  if (m > pubkeys.length || pubkeys.length<1 || m < 1) {
+    res.json({"error":true, "msg":"Invalid m and n values.", data:null})
+    return
+  }
+
+  let pubkeyarr = []
+
+  for (let p = 0; p < pubkeys.length; p++) {
+    const pubkey = pubkeys[p];
+    pubkeyarr.push(_.trim(pubkey))
+  } 
+
+  try {
+    client.createMultiSig(m, pubkeyarr).then(multisig=>{
+      res.json({"error":false, "msg":"Multisig address created successfully!", data:multisig})
+      return
+    }).catch(e=>{
+      console.error(e.message)
+      res.json({"error":true, "msg":`RPC ERROR: ${e.message}`, data:null})
+      return
+    })
+  } catch (error) {
+    console.error(error);
+  }
+
+})
+
+
 
 router.post('/test', (req, res)=>{
   funcs.newChangeAddr().then(changeAddr=>res.json({"res": changeAddr}));

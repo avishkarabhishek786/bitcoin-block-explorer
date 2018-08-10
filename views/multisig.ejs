@@ -1,0 +1,26 @@
+<% include partials/header.ejs %>
+
+<div class="container">
+    <h2>Create a Multisignature Bitcoin address</h2>
+    <div class="col-md-12 mg-20">
+        <div class="form-group">
+          <label for="mreqkey">Number of keys required to spend transaction</label>
+          <input type="number" class="form-control" id="mreqkey" placeholder="Enter a number">
+        </div>
+        <div class="form-group">
+          <label for="nkeys">Enter all the Public keys or addresses separated by comma</label>
+          <input type="text" class="form-control" id="nkeys" placeholder="Pubkeys">
+        </div>
+        <button type="submit" id="MultiSigBtn" class="btn btn-primary">Create MultiSig Address</button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card" id="res-div">Your address will appear here</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="mg-20"></div>
+<% include partials/footer.ejs %>
