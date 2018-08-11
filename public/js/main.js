@@ -26,6 +26,9 @@ $(document).on('click', '.screen-req', function(e) {
     case 'getconnectioncount':
       url = '/getconnectioncount';
       break;
+    case 'getmemoryinfo':
+      url = '/getmemoryinfo';
+      break;
   
     default:
       break;
@@ -48,7 +51,6 @@ $(document).on('click', '.screen-req', function(e) {
       }
       if(typeof res.getchaintips !== 'undefined') {
         response += JSON.stringify(res);
-        console.log(response);
       }
       if(typeof res.getconnectioncount !== 'undefined') {
         response += res.getconnectioncount;
@@ -56,7 +58,10 @@ $(document).on('click', '.screen-req', function(e) {
 
       if(typeof res.getblockchaininfo !== 'undefined') {
         response += JSON.stringify(res);
-        console.log(response);
+      }
+      
+      if(typeof res.getmemoryinfo.locked !== 'undefined') {
+        response += JSON.stringify(res.getmemoryinfo.locked);
       }
 
       $('#screen').html(response);

@@ -107,6 +107,19 @@ router.post('/getconnectioncount', (req, res)=>{
   }   
 })
 
+/**getmemoryinfo */
+router.post('/getmemoryinfo', (req, res)=>{
+  try {
+    client.getMemoryInfo().then(info=>{
+      res.json({getmemoryinfo:info})
+    })
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+
+
 router.get('/rawtransaction', (req, res)=>{
   res.render('rawtransaction', {
     title: 'rawtransaction',
@@ -234,58 +247,12 @@ router.get('/multisig', (req, res)=>{
   })
 })
 
-// router.post('/createmultisiggg', (req, res)=>{
-//   let params = _.pick(req.body, ['m', 'keys'])
-
-//   let m = parseInt(params.m)
-//   let pubkeys = params.keys.split(",")
-  
-//   if (m < pubkeys.length) {
-//     res.json({"error":true, "msg":"m cannot be less than n", data:null})
-//     return
-//   }
-  
-//   let pubkeyarr = []
-
-//   for (var key in pubkeys) {    
-//     let promise = funcs.isAddressValid(_.trim(pubkeys[key]))
-//     pubkeyarr.push(promise);   
-//   } 
-
-//   let validPubKeys = []
-
-//   Promise.all(pubkeyarr).then((res)=>{
-//     res.forEach((op)=>{
-//       validPubKeys.push(op);
-//     })
-//     return validPubKeys
-//   }).then(pubK=>{
-//     //console.log(typeof pubK);
-//     //console.log(m);
-//     if (pubK.length<1 || pubK.length < m) {
-//       res.json({"error":true, "msg":"Invalid numbers of Public keys", data:null})
-//       return
-//     }
-//     try {
-//       client.createMultiSig(m, pubK).then(multisig=>{
-//         res.json({"error":false, "msg":"Multisig address created successfully!", data:multisig})
-//         return
-//       }).catch(e=>console.error(e))
-//     } catch (error) {
-//       console.error(error);
-//     }
-
-//   })
-
-// })
-
-
-
 router.post('/createmultisig', (req, res)=>{
   let params = _.pick(req.body, ['m', 'keys'])
 
   let m = parseInt(params.m)
   let pubkeys = params.keys.split(",")
+  //0394a88bd5c7daff2cacbd8e95f3f3a742434987d64d4f5d81cc1c8864d116e6db, 033ca57a4330838bde32e2916e5894e2d50a893e3087107556691d5eb2cb1760f7
   
   if (m > pubkeys.length || pubkeys.length<1 || m < 1) {
     res.json({"error":true, "msg":"Invalid m and n values.", data:null})
