@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/avishkarabhishek786/bitflo-block-explorer.git"
+    "url": "git+https://github.com/avishkarabhishek786/bitcoin-block-explorer.git"
   },
   "keywords": [
     "Bitcoin",
@@ -23,9 +23,9 @@
   "author": "Abhishek Sinha",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/avishkarabhishek786/bitflo-block-explorer/issues"
+    "url": "https://github.com/avishkarabhishek786/bitcoin-block-explorer/issues"
   },
-  "homepage": "https://github.com/avishkarabhishek786/bitflo-block-explorer#readme",
+  "homepage": "https://github.com/avishkarabhishek786/bitcoin-block-explorer#readme",
   "dependencies": {
     "axios": "^0.18.0",
     "bitcoin-core": "^2.0.0",
