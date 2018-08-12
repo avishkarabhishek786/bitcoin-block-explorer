@@ -12504,15 +12504,24 @@ $(document).on('click', '#lsus-btn', function() {
        let t = '';
        for (let i = 0; i < data.listUnspent.length; i++) {
          const element = data.listUnspent[i];
-         if (!element.spendable) {
+         if (element.confirmations < 6) {
            continue;
          }
+
+         let multisig = '';
+         if (!element.spendable) {
+          multisig = ' (Maybe possibly MultiSig) ';
+         }
+
          t += '<input type="checkbox" class="gchk"> Select this Tx';
          t += '<ul class="tclick">';
          t += '<li>Address: '+element.address+'</li>';
          t += 'Amount: <li id="gtxamount">'+element.amount+'</li>';
          t += 'Txid: <li id="gtx">'+element.txid+'</li>';
          t += 'Vout: <li id="gvout">'+element.vout+'</li>';
+         t += 'Redeem Script: <li id="redScr">'+element.redeemScript+'</li>';
+         t += 'scriptPubKey: <li id="scrPk">'+element.scriptPubKey+'</li>';
+         t += 'Spendable: <li id="gspndbl"><strong>'+element.spendable+'</strong> '+multisig+' </li>';
          t += '<li> Confirmations: '+element.confirmations+'</li>';
          t += '</ul>';
          t += '<hr>';
@@ -12697,7 +12706,89 @@ $(document).on('click', '#importaddress-btn', function() {
   });
 });
  
+// Send MultiSig
+$(document).on('click', '#sendMultiSigTxBtn', function() {
+  var btn = this;
+  var hex = $("#sendTxDiv").text();
+  var _redeemscript = $("#_redeemscript").val();
+  var job = "sendtx";
 
+  console.log(hex.length, _redeemscript.length);
+  
+  if (hex.length<=0 || _redeemscript.length <= 0) {
+    alert("No Hex data or redeem script found!");
+    return;
+  }
+
+  let amnt = $('#amnt').val();
+  amnt = parseFloat(amnt);
+  let sendaddr = $('#sendaddr').val();
+
+  var boxes = $('input[class=gchk]:checked');
+  /**Selecting only 1 checkbox is allowed in our multisig operations
+     * So we will not allow more than 1 box to be ticked
+     */
+
+  if (boxes.length>1) {
+    alert("Please select only 1 multisig utxo");
+    return;
+  }
+     
+  var txArr = [];
+  var voutArr = [];
+  var redeemScrArr = [];
+  var spkArr = [];
+  var txtext = "";
+  var spk = "";
+  var vouttext = "";
+  var tx_amount = 0;
+  // redeemScript is undefined in case of MultiSig in listunspent
+
+
+  boxes.each(function(box){
+    var btn = this;
+    txbal = $(btn).next('ul').children("#gtxamount").text();
+    txtext = $(btn).next('ul').children("#gtx").text();
+    spk = $(btn).next('ul').children("#scrPk").text();
+    vouttext = $(btn).next('ul').children("#gvout").text();
+    vouttext = parseInt(vouttext);
+    
+    if (txtext.length>0 && vouttext>-1 && spk.length>0) {
+      txArr.push(txtext);
+      voutArr.push(vouttext);
+      spkArr.push(spk);
+    }
+
+    // Add the amount in selected txes
+    tx_amount += parseFloat(txbal);
+  });
+  // console.log(txArr); 
+  // console.log(voutArr); 
+  // console.log(tx_amount); 
+
+ if(sendaddr.length > 0 && txArr.length == 1 && voutArr.length == 1 && amnt>0 && tx_amount>0 && spkArr.length == 1) {
+  $.ajax({
+    type: 'post',
+    url: '/spendmultisig',
+    data: {job:job, hex:hex, _redeemscript:_redeemscript, txArr:txArr, voutArr:voutArr, spkArr:spkArr, tx_amount:tx_amount},
+    success: function(data) {
+      console.log(data);
+      // var t = '<p>Error: Something went wrong! Check console logs.</p>';
+      // if($.trim(data.signedtxid) !== null) {
+      //   t = '<h5>Transaction Successful: ';
+      //   t += "<a href='https://live.blockcypher.com/btc-testnet/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a>  ";        
+      //   t += "  <a href='https://testnet.blockchain.info/tx/"+data.signedtxid+"?format=json' target='_blank'>View my transaction JSON</a></h5>";        
+      // }
+      // $('#res-card-result').html(t);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+   } 
+  });
+ }
+
+ 
+});
 
 
 

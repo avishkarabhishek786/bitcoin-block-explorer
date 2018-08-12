@@ -314,7 +314,7 @@ router.post('/importaddress', (req, res)=>{
       }
       client.importAddress(res.address).then(vaddr=>{
         console.log(vaddr);
-        res.json({error:false, msg:"Please wait while the wallet rescanning is finished!", data:null})
+        res.json({error:false, msg:"Please wait while the wallet rescanning is finished! After rescanning click the 'View Available UTXOs' button and choose the multisig address.", data:null})
         return
       }).catch((e)=>{
         console.error(e);
@@ -324,10 +324,59 @@ router.post('/importaddress', (req, res)=>{
     })
   } catch (error) {
     console.error(error);
-    
   }
   
+})
+
+// Spend MultiSig Tx
+router.post('/spendmultisig', (req, res)=>{
+  let data = _.pick(req.body, ['job', 'hex', '_redeemscript', 'txArr', 'voutArr', 'spkArr', 'tx_amount'])
   
+  if (typeof data.job == undefined || typeof data.hex==undefined ||  data.job!=="sendtx" || data.hex.length<0 || data.txArr.length<0 || data.voutArr.length<0 || data.spkArr.length<0 || data.tx_amount<0) {
+    res.json({"error":true, "msg":"Invalid request", "data":null});
+    return;
+  }
+
+  let raw = data.hex;
+  let _redeemscript = data._redeemscript;
+  let tx = data.txArr[0]
+  let vout = data.voutArr[0]
+  let script_pub_key = data.spkArr[0]
+  let bal_in_tx = data.tx_amount
+
+  axios({
+    method:'get',
+    url:`https://testnet.blockchain.info/rawtx/${tx}`
+  })
+    .then(function(response) {
+    //console.log(response);
+    if (response.status != 200) {
+      res.json({"error":true, "msg":"Could not fetch tx input address info", "data":null});
+      return
+    }
+    //console.log(response.data.inputs[0].prev_out);
+    let po = response.data.inputs
+    let addr_arr = []
+    for (let i = 0; i < po.length; i++) {
+      const element = po[i].prev_out;
+      addr_arr.push(element.addr)
+    }
+    console.log(addr_arr);
+        
+  }).catch((e)=>{
+    console.error(e)
+  });
+
+  // try {
+  //   client.dumpPrivKey(addr).then(pk=>{
+  //     if (condition) {
+        
+  //     }   
+  //   })
+  // } catch (error) {
+  //   console.error(error);
+  // }
+
 })
 
 

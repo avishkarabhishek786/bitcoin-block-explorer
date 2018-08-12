@@ -12,6 +12,14 @@
               <button type="submit" id="importaddress-btn" class="btn btn-primary">Submit</button>
         </div>
     </div>
-</div>
 
+    <%include partials/listunspent.ejs %>
+    <%include partials/unsignedhexrawtx.ejs %>
+
+    <label for="_redeemscript">Enter your Redeem Script that you got while creating the Multi Sig Address: </label>
+    <textarea class="form-control" id="_redeemscript" cols="30" rows="10" placeholder="Place your Reddem script"></textarea>
+
+    <button type="submit" id="sendMultiSigTxBtn" class="btn btn-success">Send Transaction</button>
+</div>
+<div class="mg-20"></div>
 <% include partials/footer.ejs %>
