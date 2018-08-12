@@ -12664,6 +12664,40 @@ $(document).on('click', '#MultiSigBtn', function() {
 
 })
 
+/**6.2: Spending a Transaction with a Multisig */
+$(document).on('click', '#importaddress-btn', function() {
+  let btn = this;
+  let job = 'importaddress';
+  let addr = $('#_importaddress').val();
+
+  if ($.trim(addr)=="") {
+    alert("Please specify a valid address!");
+    return;
+  }
+  
+  $.ajax({
+    url:'/importaddress',
+    type:'post',
+    data: {job:job, addr:addr},
+    success: function(response) {
+      console.log(response);
+      if (response.error==true) {
+        alert("ERROR!");
+        return;
+      }
+      if (response.error==false && response.msg.length>0) {
+        alert(response.msg.length);
+      } else {
+        alert("Something is wrong! We got no response back.");
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+   }    
+  });
+});
+ 
+
 
 
 

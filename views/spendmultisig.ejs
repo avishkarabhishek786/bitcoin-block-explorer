@@ -1,0 +1,17 @@
+<% include partials/header.ejs %>
+
+<div class="container">
+    <h2>Spend from a Multisig address:</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="_importaddress">Import an address:</label>
+                <input type="text" class="form-control" id="_importaddress" aria-describedby="addrHelp" placeholder="Enter address to be imported">
+                <small id="addrHelp" class="form-text text-muted">We'll never share your data with anyone else.</small>
+              </div>
+              <button type="submit" id="importaddress-btn" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>
+
+<% include partials/footer.ejs %>

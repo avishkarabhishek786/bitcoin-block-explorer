@@ -239,6 +239,8 @@ router.post('/sendrawtx', (req, res)=>{
 
 /**MultiSig Operations */
 
+/**6.1: Sending a Transaction with a Multsig */
+
 router.get('/multisig', (req, res)=>{
   res.render('multisig', {
     title: 'multisig',
@@ -279,6 +281,53 @@ router.post('/createmultisig', (req, res)=>{
     console.error(error);
   }
 
+})
+
+/**6.2: Spending a Transaction with a Multisig */
+router.get('/spendmultisig', (req, res)=>{
+  res.render('spendmultisig', {
+    title: 'multisig',
+    errors: {},
+    data: {}
+  })
+})
+
+router.post('/importaddress', (req, res)=>{
+  let params = _.pick(req.body, ['job', 'addr'])
+  let addr = _.trim(params.addr)
+
+  if(_.trim(params.job)==undefined || _.trim(params.job)=="") {
+    res.json({error:true, msg:"Invalid request", data:null})
+    return
+  }
+
+  if(addr==undefined || addr=="") {
+    res.json({error:true, msg:"Please specify a valid address.", data:null})
+    return
+  }
+
+  try {
+    client.validateAddress(addr).then(res=>{
+      if(res.isvalid==undefined || res.isvalid==false) {
+        res.json({error:true, msg:"Invalid address", data:null})
+        return
+      }
+      client.importAddress(res.address).then(vaddr=>{
+        console.log(vaddr);
+        res.json({error:false, msg:"Please wait while the wallet rescanning is finished!", data:null})
+        return
+      }).catch((e)=>{
+        console.error(e);
+      })
+    }).catch((e)=>{
+      console.error(e);
+    })
+  } catch (error) {
+    console.error(error);
+    
+  }
+  
+  
 })
 
 
