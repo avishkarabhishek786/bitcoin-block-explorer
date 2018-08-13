@@ -400,7 +400,6 @@ $(document).on('click', '#sendMultiSigTxBtn', function() {
   var tx_amount = 0;
   // redeemScript is undefined in case of MultiSig in listunspent
 
-
   boxes.each(function(box){
     var btn = this;
     txbal = $(btn).next('ul').children("#gtxamount").text();
@@ -427,15 +426,22 @@ $(document).on('click', '#sendMultiSigTxBtn', function() {
     type: 'post',
     url: '/spendmultisig',
     data: {job:job, hex:hex, _redeemscript:_redeemscript, txArr:txArr, voutArr:voutArr, spkArr:spkArr, tx_amount:tx_amount},
-    success: function(data) {
-      console.log(data);
-      // var t = '<p>Error: Something went wrong! Check console logs.</p>';
-      // if($.trim(data.signedtxid) !== null) {
-      //   t = '<h5>Transaction Successful: ';
-      //   t += "<a href='https://live.blockcypher.com/btc-testnet/tx/"+data.signedtxid+"' target='_blank'>View my transaction</a>  ";        
-      //   t += "  <a href='https://testnet.blockchain.info/tx/"+data.signedtxid+"?format=json' target='_blank'>View my transaction JSON</a></h5>";        
-      // }
-      // $('#res-card-result').html(t);
+    success: function(res) {
+      console.log(res);
+      
+      var t = '<p>Error: Something went wrong! Data could not be signed.</p>';
+      if(res.error!==true && $.trim(res.data.hex) !== undefined && $.trim(res.data.hex) !== null) {
+        t = '<h5>Transaction signed successfully: </h5>';
+        t += `<strong>Signed Hex String: ${res.data.hex}</strong>`;
+        if (res.data.complete==true) {
+          t += `<p class='text-success'>Transaction is completely signed. You can now spend the transaction.`;  
+        } else {
+          t += `<p class='text-warning'>This transaction is partially signed. You need to get it signed from rest private keys as well to spend the Bitcoins.`;
+        }
+        t += '<h5>Full Response:</h5>';
+        t += `<div class="card">${JSON.stringify(res)}</div>`;
+      }
+      $('#res-sign-result').html(t);
     },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(textStatus, errorThrown);

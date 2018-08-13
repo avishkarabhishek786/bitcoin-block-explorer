@@ -9,9 +9,37 @@ let newChangeAddr = ()=>{
               return reject("Unable to get change address")
           } 
           return resolve(changeAdr)         
+        }).catch ((error)=>{
+            console.error(error);
+            return reject(error);
         }) 
+    }).catch ((error)=>{
+        console.error(error);
+        return reject(error);
     })
       
+}
+
+let getPrivateKey = (addr) => {
+    return new Promise((resolve, reject)=>{
+        try {
+            client.dumpPrivKey(addr).then(pk=>{
+              if (pk==undefined || pk == null) {
+                return reject(error)
+              }   
+              return pk
+            })
+            .then(privateKey=>{
+                return resolve(privateKey)
+            }).catch ((error)=>{
+                console.error(error);
+            })
+          } catch (error) {
+            console.error(error);
+          }
+    }).catch((error)=>{
+        console.log(error);  
+    })      
 }
 
 let isAddressValid = (addr) => {
@@ -39,5 +67,6 @@ let isAddressValid = (addr) => {
 
 module.exports = {
     newChangeAddr,
-    isAddressValid
+    isAddressValid,
+    getPrivateKey
 }

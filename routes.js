@@ -340,10 +340,13 @@ router.post('/spendmultisig', (req, res)=>{
   let raw = data.hex;
   let _redeemscript = data._redeemscript;
   let tx = data.txArr[0]
-  let vout = data.voutArr[0]
+  let vout = parseInt(data.voutArr[0])
   let script_pub_key = data.spkArr[0]
   let bal_in_tx = data.tx_amount
 
+  let prevtxs = [ { "txid": `${tx}`, "vout": vout, "scriptPubKey": `${script_pub_key}`, "redeemScript": `${_redeemscript}` } ]
+  console.log(`prevtxs: ${prevtxs}`);
+  
   axios({
     method:'get',
     url:`https://testnet.blockchain.info/rawtx/${tx}`
@@ -361,21 +364,38 @@ router.post('/spendmultisig', (req, res)=>{
       const element = po[i].prev_out;
       addr_arr.push(element.addr)
     }
-    console.log(addr_arr);
+    console.log('address array: '+addr_arr);
+
+    let pkPromiseArr = []
+    for (let j = 0; j < addr_arr.length; j++) {
+      const _addr = addr_arr[j];
+      let pkPromise = funcs.getPrivateKey(_.trim(_addr))
+      pkPromiseArr.push(pkPromise)
+    }
+
+    let valid_pk = []
+
+    Promise.all(pkPromiseArr).then(res=>{
+      res.forEach(vpk => {
+        valid_pk.push(vpk)
+      });
+      return valid_pk
+    }).then(private_key=>{
+      console.log(`Private Key: ${private_key}`);
+      try {
+        client.signRawTransaction(raw, prevtxs, private_key).then(srt=>{
+          console.log(`Signed Raw Transaction Response: ${srt}`);
+          res.json({"error":false, "msg":"Transaction signed succesfully.", "data":srt})
+          return
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    })
         
   }).catch((e)=>{
     console.error(e)
   });
-
-  // try {
-  //   client.dumpPrivKey(addr).then(pk=>{
-  //     if (condition) {
-        
-  //     }   
-  //   })
-  // } catch (error) {
-  //   console.error(error);
-  // }
 
 })
 
