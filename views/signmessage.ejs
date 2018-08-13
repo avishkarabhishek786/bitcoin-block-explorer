@@ -1,0 +1,25 @@
+<% include partials/header.ejs %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Sign your message:</h5>
+            <label for="_addr">Your wallet address (Address must be of your own wallet/daemon running in background)</label>
+            <input type="text" id="_addr" class="form-control">
+
+            <label for="_message">Message to be signed:</label>
+            <textarea id="_message" class="form-control" cols="30" rows="10"></textarea>
+
+            <p></p>
+            <button type="submit" class="btn btn-primary" id="sign-message-btn">Sign Message</button>
+            
+            <div class="card" id="res-div"></div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12"></div>
+    </div>
+</div>
+
+<% include partials/footer.ejs %>

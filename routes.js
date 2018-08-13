@@ -399,7 +399,45 @@ router.post('/spendmultisig', (req, res)=>{
 
 })
 
+router.get('/signmessage', (req, res)=>{
+  res.render('signmessage', {
+    title: 'signmessage',
+    errors: {},
+    data: {}
+  })
+})
 
+router.post('/signmessage', (req, res)=>{
+  let params = _.pick(req.body, ['job', 'pubKey', 'msg'])
+
+  if (_.trim(params.job) !== 'sign-message') {
+    res.json({"error":true, "msg":"Unknown request", "data":null});
+    return 
+  }
+
+  let pubKey = _.trim(params.pubKey)
+  let message = _.trim(params.msg)
+
+  if (pubKey==undefined || pubKey=='' || message==undefined || message=='') {
+    res.json({"error":true, "msg":"All fields are required!", "data":null});
+    return
+  }
+
+  try {
+    client.signMessage(pubKey, message).then(signature=>{
+      if (signature==null || signature==undefined) {
+        res.json({"error":true, "msg":"Invalid response!", "data":null});
+        return
+      }
+      res.json({"error":false, "msg":"Signature generated succesfully!", "data":signature});
+      return
+    })
+  } catch (error) {
+    console.error(error)
+  }
+
+  
+})
 
 router.post('/test', (req, res)=>{
   funcs.newChangeAddr().then(changeAddr=>res.json({"res": changeAddr}));

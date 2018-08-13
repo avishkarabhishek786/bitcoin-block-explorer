@@ -12792,8 +12792,42 @@ $(document).on('click', '#sendMultiSigTxBtn', function() {
    } 
   });
  }
+});
 
- 
+$(document).on('click', '#sign-message-btn', function() {
+  var pubKey = $('#_addr').val();
+  var msg = $('#_message').val();
+  var job = 'sign-message';
+
+  $.ajax({
+    url: '/signmessage',
+    type: 'post',
+    data: {job:job, pubKey:pubKey, msg:msg},
+    success: function(response) {
+      console.log(response);
+
+      if (response.error==true) {
+        if (response.msg.length>0) {
+          alert(response.msg);
+        }
+        return;
+      }
+
+      let t = 'Could not retrive any response.';
+
+      if (response.error==false && response.msg.length>0 && response.data!=null) {
+        t = '<h5>Signature successfully created: </h5>';
+        t += `<strong>${response.data}</strong>`;
+      }
+
+      $('#res-div').html(t);
+
+    }, 
+    error: function(e) {
+      console.error(e);
+    }
+  });
+
 });
 
 
