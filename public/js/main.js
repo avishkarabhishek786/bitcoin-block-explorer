@@ -29,6 +29,9 @@ $(document).on('click', '.screen-req', function(e) {
     case 'getmemoryinfo':
       url = '/getmemoryinfo';
       break;
+    case 'getmininginfo':
+      url = '/getmininginfo';
+      break;
   
     default:
       break;

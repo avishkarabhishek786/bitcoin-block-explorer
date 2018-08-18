@@ -117,6 +117,16 @@ router.post('/getmemoryinfo', (req, res)=>{
     console.error(error)
   }
 })
+/**getmininginfo */
+router.post('/getmininginfo', (req, res)=>{
+  try {
+    client.GetMiningInfo().then(mem=>{
+      res.json({getmininginfo:mem})
+    })
+  } catch (error) {
+    console.error(error)
+  }
+})
 
 
 
