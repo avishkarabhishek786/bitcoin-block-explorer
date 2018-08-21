@@ -12373,6 +12373,9 @@ $(document).on('click', '.screen-req', function(e) {
     case 'getmemoryinfo':
       url = '/getmemoryinfo';
       break;
+    case 'getmininginfo':
+      url = '/getmininginfo';
+      break;
   
     default:
       break;
@@ -12588,7 +12591,7 @@ $(document).on('click', '#crtx-btn', function() {
           t += `<div class="card">${dec}</div>`;
           t += `<br><p>If everything is right please click the button "Send transaction" below to send the transaction.</p>`;
 
-          $('#sendTxDiv').text(data.data[0]);
+          $('#sendTxDiv').val(data.data[0]);
         }
         $('#res-card').html(t);
       },
@@ -12709,8 +12712,9 @@ $(document).on('click', '#importaddress-btn', function() {
 // Send MultiSig
 $(document).on('click', '#sendMultiSigTxBtn', function() {
   var btn = this;
-  var hex = $("#sendTxDiv").text();
+  var hex = $("#sendTxDiv").val();
   var _redeemscript = $("#_redeemscript").val();
+  var _pk = $("#_pk").val();
   var job = "sendtx";
 
   console.log(hex.length, _redeemscript.length);
@@ -12769,7 +12773,7 @@ $(document).on('click', '#sendMultiSigTxBtn', function() {
   $.ajax({
     type: 'post',
     url: '/spendmultisig',
-    data: {job:job, hex:hex, _redeemscript:_redeemscript, txArr:txArr, voutArr:voutArr, spkArr:spkArr, tx_amount:tx_amount},
+    data: {job:job, hex:hex, _redeemscript:_redeemscript, txArr:txArr, voutArr:voutArr, spkArr:spkArr, tx_amount:tx_amount, _pk:_pk},
     success: function(res) {
       console.log(res);
       

@@ -253,7 +253,7 @@ router.post('/sendrawtx', (req, res)=>{
 
 router.get('/multisig', (req, res)=>{
   res.render('multisig', {
-    title: 'multisig',
+    title: 'create multisig transaction',
     errors: {},
     data: {}
   })
@@ -296,7 +296,7 @@ router.post('/createmultisig', (req, res)=>{
 /**6.2: Spending a Transaction with a Multisig */
 router.get('/spendmultisig', (req, res)=>{
   res.render('spendmultisig', {
-    title: 'multisig',
+    title: 'spend multisig transaction',
     errors: {},
     data: {}
   })
@@ -340,7 +340,7 @@ router.post('/importaddress', (req, res)=>{
 
 // Spend MultiSig Tx
 router.post('/spendmultisig', (req, res)=>{
-  let data = _.pick(req.body, ['job', 'hex', '_redeemscript', 'txArr', 'voutArr', 'spkArr', 'tx_amount'])
+  let data = _.pick(req.body, ['job', 'hex', '_redeemscript', 'txArr', 'voutArr', 'spkArr', 'tx_amount', '_pk'])
   
   if (typeof data.job == undefined || typeof data.hex==undefined ||  data.job!=="sendtx" || data.hex.length<0 || data.txArr.length<0 || data.voutArr.length<0 || data.spkArr.length<0 || data.tx_amount<0) {
     res.json({"error":true, "msg":"Invalid request", "data":null});
@@ -353,61 +353,88 @@ router.post('/spendmultisig', (req, res)=>{
   let vout = parseInt(data.voutArr[0])
   let script_pub_key = data.spkArr[0]
   let bal_in_tx = data.tx_amount
+  let _pk = _.trim(data._pk)
 
   let prevtxs = [ { "txid": `${tx}`, "vout": vout, "scriptPubKey": `${script_pub_key}`, "redeemScript": `${_redeemscript}` } ]
   console.log(`prevtxs: ${prevtxs}`);
-  
-  axios({
-    method:'get',
-    url:`https://testnet.blockchain.info/rawtx/${tx}`
-  })
-    .then(function(response) {
-    //console.log(response);
-    if (response.status != 200) {
-      res.json({"error":true, "msg":"Could not fetch tx input address info", "data":null});
-      return
-    }
-    //console.log(response.data.inputs[0].prev_out);
-    let po = response.data.inputs
-    let addr_arr = []
-    for (let i = 0; i < po.length; i++) {
-      const element = po[i].prev_out;
-      addr_arr.push(element.addr)
-    }
-    console.log('address array: '+addr_arr);
 
-    let pkPromiseArr = []
-    for (let j = 0; j < addr_arr.length; j++) {
-      const _addr = addr_arr[j];
-      let pkPromise = funcs.getPrivateKey(_.trim(_addr))
-      pkPromiseArr.push(pkPromise)
+  if (_pk.length>0) {
+
+    let _pkArr = []
+    _pkArr.push(_pk)    
+    
+    try {
+      client.signRawTransaction(raw, prevtxs, _pkArr).then(srt=>{
+        console.log(`Signed Raw Transaction Response: ${srt}`);
+        res.json({"error":false, "msg":"Transaction signed succesfully.", "data":srt})
+        return
+      }).catch(e=>{
+        console.error(e)
+      })
+    } catch (error) {
+      console.error(error)
     }
 
-    let valid_pk = []
+  } else {
 
-    Promise.all(pkPromiseArr).then(res=>{
-      res.forEach(vpk => {
-        valid_pk.push(vpk)
-      });
-      return valid_pk
-    }).then(private_key=>{
-      console.log(`Private Key: ${private_key}`);
-      try {
-        client.signRawTransaction(raw, prevtxs, private_key).then(srt=>{
-          console.log(`Signed Raw Transaction Response: ${srt}`);
-          res.json({"error":false, "msg":"Transaction signed succesfully.", "data":srt})
-          return
-        })
-      } catch (error) {
-        console.error(error)
-      }
+    axios({
+      method:'get',
+      url:`https://testnet.blockchain.info/rawtx/${tx}`
     })
-        
-  }).catch((e)=>{
-    console.error(e)
-  });
+      .then(function(response) {
+      //console.log(response);
+      if (response.status != 200) {
+        res.json({"error":true, "msg":"Could not fetch tx input address info", "data":null});
+        return
+      }
+      //console.log(response.data.inputs[0].prev_out);
+      let po = response.data.inputs
+      let addr_arr = []
+      for (let i = 0; i < po.length; i++) {
+        const element = po[i].prev_out;
+        addr_arr.push(element.addr)
+      }
+      console.log('address array: '+addr_arr);
+  
+      let pkPromiseArr = []
+      for (let j = 0; j < addr_arr.length; j++) {
+        const _addr = addr_arr[j];
+        let pkPromise = funcs.getPrivateKey(_.trim(_addr))
+        pkPromiseArr.push(pkPromise)
+      }
+  
+      let valid_pk = []
+  
+      Promise.all(pkPromiseArr).then(res=>{
+        res.forEach(vpk => {
+          valid_pk.push(vpk)
+        });
+        return valid_pk
+      }).then(private_key=>{
+        console.log(`Private Key: ${private_key}`);
+        try {
+          client.signRawTransaction(raw, prevtxs, private_key).then(srt=>{
+            console.log(`Signed Raw Transaction Response: ${srt}`);
+            res.json({"error":false, "msg":"Transaction signed succesfully.", "data":srt})
+            return
+          }).catch(e=>{
+            console.error(e)
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      })
+          
+    }).catch((e)=>{
+      console.error(e)
+    });
 
+  }
+  
 })
+
+
+/**signMessage */
 
 router.get('/signmessage', (req, res)=>{
   res.render('signmessage', {

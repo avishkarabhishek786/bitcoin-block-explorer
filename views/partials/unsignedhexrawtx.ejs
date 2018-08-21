@@ -5,8 +5,10 @@
                 <input type="text" id="sendaddr" class="form-control">
                 <label for="amnt">Amount to send (KEEP MINER's FEE IN MIND): </label>
                 <input type="text" id="amnt" class="form-control" placeholder="Amount in BTC">
+                <label for="_pk">Private Key (Optional: Only use when the private key was not generated in the current running wallet.)</label>
+                <input type="text" class="form-control" id="_pk" placeholder="Your Private Key">
                 <br>
-                <button type="button" id="crtx-btn" class="btn btn-primary" name="button">Send FLO</button>
+                <button type="button" id="crtx-btn" class="btn btn-primary" name="button">Send BTC</button>
             </div>
     </div>
     <div class="cards mg-20" id="res-card"></div>          
@@ -15,7 +17,7 @@
         <div class="col-md-12">
             <div class="mg-20"></div>
             <label for="sendTxDiv">Your Transaction Hex will appear here.</label>
-            <div id="sendTxDiv" class="card" disabled="true"></div>
+            <textarea id="sendTxDiv" class="form-control" rows=3></textarea>
             <!--Send button is in rawtransaction.ejs-->
         </div>
     </div>
