@@ -120,7 +120,7 @@ router.post('/getmemoryinfo', (req, res)=>{
 /**getmininginfo */
 router.post('/getmininginfo', (req, res)=>{
   try {
-    client.GetMiningInfo().then(mem=>{
+    client.getMiningInfo().then(mem=>{
       res.json({getmininginfo:mem})
     })
   } catch (error) {
@@ -128,7 +128,17 @@ router.post('/getmininginfo', (req, res)=>{
   }
 })
 
-
+/**getnewaddress */
+router.post('/getnewaddress', (req, res)=>{
+  try {
+    client.getNewAddress("", "legacy").then(addr=>{
+      console.log(addr);
+      res.json({"getnewaddress": addr})
+    })
+  } catch (error) {
+    console.log(error);
+  }
+})
 
 router.get('/rawtransaction', (req, res)=>{
   res.render('rawtransaction', {

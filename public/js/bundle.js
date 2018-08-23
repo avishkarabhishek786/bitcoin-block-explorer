@@ -12376,6 +12376,9 @@ $(document).on('click', '.screen-req', function(e) {
     case 'getmininginfo':
       url = '/getmininginfo';
       break;
+    case 'getnewaddress':
+      url = '/getnewaddress';
+      break;
   
     default:
       break;
@@ -12387,7 +12390,7 @@ $(document).on('click', '.screen-req', function(e) {
     success: function(res) {
       console.log(res);
       
-      $('#res-card').removeClass(' d-none');
+      $('#res-card').removeClass('d-none');
       var response = '<h5>Response: </h5>';
       
       if(typeof res.getbestblockhash !== 'undefined') {
@@ -12407,8 +12410,15 @@ $(document).on('click', '.screen-req', function(e) {
         response += JSON.stringify(res);
       }
       
-      if(typeof res.getmemoryinfo.locked !== 'undefined') {
+      if(typeof res.getmemoryinfo !== 'undefined') {
         response += JSON.stringify(res.getmemoryinfo.locked);
+      }
+
+      if(typeof res.getmininginfo !== 'undefined') {
+        response += JSON.stringify(res.getmininginfo);
+      }
+      if(typeof res.getnewaddress !== 'undefined') {
+        response += res.getnewaddress;
       }
 
       $('#screen').html(response);
