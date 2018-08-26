@@ -500,4 +500,41 @@ $(document).on('click', '#sign-message-btn', function() {
 
 });
 
+$(document).on('click', '#btn-verify', function() {
+  var vaddr = $("#vaddr").val();
+  var _vsig = $("#_vsig").val();
+  var _vmsg = $("#_vmsg").val();
+  var job = 'verify-msg';
+
+  vaddr = $.trim(vaddr);
+  _vsig = $.trim(_vsig);
+  _vmsg = $.trim(_vmsg);
+
+  if (vaddr=="" || _vsig=="" || _vmsg=="") {
+    alert("Please fill all fields!");
+    return;
+  }
+
+  $.ajax({
+    url:'/verify-message',
+    type:'post',
+    data:{job:job, vaddr:vaddr, _vsig:_vsig, _vmsg:_vmsg},
+    success: function(res) {
+      console.log(res);
+      if (res.error==true&& res.msg.length>0) {
+        alert(res.msg);
+        return;
+      }
+      if (res.error==false && res.msg.length>0) {
+        alert(res.msg);
+        return;
+      }
+    },
+    error: function(e) {
+      console.error(e);
+    }
+  });
+
+});
+
 

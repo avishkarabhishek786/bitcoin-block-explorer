@@ -478,12 +478,52 @@ router.post('/signmessage', (req, res)=>{
       }
       res.json({"error":false, "msg":"Signature generated succesfully!", "data":signature});
       return
+    }).catch(e=>{
+      console.error(e)
     })
   } catch (error) {
     console.error(error)
   }
 
-  
+})
+
+router.post('/verify-message', (req, res)=>{
+
+  let params = _.pick(req.body, ['job', 'vaddr', '_vsig', '_vmsg'])
+
+  let job = _.trim(params.job)
+  let vaddr = _.trim(params.vaddr)
+  let _vsig = _.trim(params._vsig)
+  let _vmsg = _.trim(params._vmsg)
+
+  if (job != 'verify-msg') {
+    res.json({error:true, msg:'Unknown request'})
+    return;
+  }
+
+  if (vaddr=='' || _vsig=='' || _vmsg=='') {
+    res.json({error:true, msg:'Please fill all the fields!'})
+    return;
+  }
+
+  try {
+    
+    client.verifyMessage(vaddr, _vsig, _vmsg).then(success=>{
+      if (!success) {
+        res.json({error:false, msg:'Validation failed!'})
+        return;
+      }
+      res.json({error:false, msg:'Validation successfull!'})
+      return;
+    }).catch(e=>{
+      console.error('error: '+e)
+      res.json({error:true, msg:e.message})
+    })
+
+  } catch (error) {
+    console.error('error: '+error);
+  }
+
 })
 
 router.post('/test', (req, res)=>{
