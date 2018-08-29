@@ -537,4 +537,37 @@ $(document).on('click', '#btn-verify', function() {
 
 });
 
+/**Send From */
+$(document).on('click', '#btn_send_from', function () {
+  var fromaccount = $("#fromaccount").val();
+  var toaddress = $("#toaddress").val();
+  var amount = $("#amount").val();
+  var minconf = $("#minconf").val();
+  var comment = $("#comment").val();
+  var comment_to = $("#comment_to").val();
+  
+  $.ajax({
+      url:'/sendfrom',
+      type:'POST',
+      data:{fromaccount:fromaccount, toaddress:toaddress, amount:amount, 
+          minconf:minconf, comment:comment, comment_to:comment_to},
+      success: function (data) {
+          console.log(data);
+          
+          if (typeof data.msg !=undefined && data.msg.length>0) {
+            alert(data.msg);
+            if (typeof data.data !=undefined && data.data.length>0) {
+              alert(data.data);
+            }
+            return;
+          }
+
+      },
+      error: function (e) {
+          console.error(e);
+      }     
+  });
+
+});
+
 

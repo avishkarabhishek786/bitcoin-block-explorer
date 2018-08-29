@@ -10,7 +10,7 @@ const funcs = require('./public/js/funcs')
 
 router.get('/', (req, res)=>{
   res.render('index', {
-    title: 'getBlock',
+    title: 'Home',
     errors: {},
     data: {}
   })
@@ -522,6 +522,57 @@ router.post('/verify-message', (req, res)=>{
 
   } catch (error) {
     console.error('error: '+error);
+  }
+
+})
+
+router.get('/sendfrom', (req, res)=>{
+  res.render('sendfrom.ejs', {
+    title: 'sendfrom',
+    errors: {},
+    data: {}
+  })
+})
+
+router.post('/sendfrom', (req, res)=>{
+
+  let params = _.pick(req.body, ['fromaccount', 'toaddress', 'amount', 'minconf', 'comment', 'comment_to'])
+  
+  let fromaccount =  _.trim(params.fromaccount)
+  let toaddress =  _.trim(params.toaddress)
+  let amount =  _.trim(params.amount)
+  amount = parseFloat(amount)
+  let minconf =  _.trim(params.minconf)
+  minconf = parseInt(minconf)
+  let comment =  _.trim(params.comment)
+  comment = _.toString(comment)
+  let comment_to =  _.trim(params.comment_to)
+  comment_to = _.toString(comment_to)
+
+  if (toaddress=="" || amount<0.00000001 || amount=="") {
+    res.json({error:true, msg:"Receiving address cannot be empty. Amount cannot be less than 0.00000001 BTC", data:null})
+    return
+  }
+
+  minconf = minconf=="" ? 6 : minconf
+
+  if (comment.length> 140 || comment_to.length>40) {
+    res.json({error:true, msg:"Comment and Comment To cannot be larger than 40 charecters.", data:null})
+    return
+  }
+
+  try {
+    client.sendFrom(fromaccount, toaddress, amount, minconf, comment, comment_to).then(txid=>{
+      if (typeof txid==undefined) {
+        res.json({error:true, msg:"Transaction unsuccessfull", data:null})
+        return
+      }
+      res.json({error:false, msg:`Transaction successfull: BTC ${amount} sent to ${toaddress}`, data:txid})
+    }).catch(e=>{
+      console.error(e);
+    })
+  } catch (error) {
+    console.error(error);
   }
 
 })

@@ -1,0 +1,29 @@
+<% include partials/header.ejs %>
+
+<div class="container">
+
+    <label for="fromaccount">From Account (Optional)</label>
+    <input type="text" class="form-control" id="fromaccount">
+    
+    <label for="toaddress">To Address (Required)</label>
+    <input type="text" class="form-control" id="toaddress">
+    
+    <label for="amount">Amount (Required)</label>
+    <input type="text" class="form-control" id="amount">
+    
+    <label for="minconf">Min conf (Optional, defualt:6)</label>
+    <input type="text" class="form-control" id="minconf">
+
+    
+    <label for="comment">Comment (Optional)</label>
+    <input type="text" class="form-control" id="comment">
+
+    <label for="comment_to">Comment to (Optional)</label>
+    <input type="text" class="form-control" id="comment_to">
+
+    <p></p>
+    <button type="submit" class="btn btn-success" id="btn_send_from">Send</button>
+
+</div>
+
+<% include partials/footer.ejs %>
