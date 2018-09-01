@@ -12379,6 +12379,9 @@ $(document).on('click', '.screen-req', function(e) {
     case 'getnewaddress':
       url = '/getnewaddress';
       break;
+    case 'getrawchangeaddress':
+      url = '/getrawchangeaddress';
+      break;
   
     default:
       break;
@@ -12419,6 +12422,9 @@ $(document).on('click', '.screen-req', function(e) {
       }
       if(typeof res.getnewaddress !== 'undefined') {
         response += res.getnewaddress;
+      }
+      if(typeof res.getrawchangeaddress !== 'undefined') {
+        response += res.getrawchangeaddress;
       }
 
       $('#screen').html(response);

@@ -140,6 +140,17 @@ router.post('/getnewaddress', (req, res)=>{
   }
 })
 
+router.post('/getrawchangeaddress', (req, res)=>{
+  try {
+    client.getRawChangeAddress().then(addr=>{
+      console.log(addr);
+      res.json({"getrawchangeaddress": addr})
+    })
+  } catch (error) {
+    console.log(error);
+  }
+})
+
 router.get('/rawtransaction', (req, res)=>{
   res.render('rawtransaction', {
     title: 'rawtransaction',
@@ -576,10 +587,5 @@ router.post('/sendfrom', (req, res)=>{
   }
 
 })
-
-router.post('/test', (req, res)=>{
-  funcs.newChangeAddr().then(changeAddr=>res.json({"res": changeAddr}));
-})
-
 
 module.exports = router
